@@ -1,11 +1,7 @@
 package main
 
 import (
-	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/muesli/reflow/wrap"
-	"github.com/tuiphy/cans/filepicker"
-	"github.com/tuiphy/cans/viewport"
 	"github.com/tuiphy/soda"
 	"log"
 	"os"
@@ -17,33 +13,13 @@ func run() error {
 		return err
 	}
 
-	filePickerKeyMap := filepicker.DefaultKeyMap()
-	filePickerKeyMap.Back = key.NewBinding(
-		key.WithKeys("backspace"),
-		key.WithHelp("backspace", "back"),
-	)
+	state := New(home)
 
-	model := soda.New(filepicker.New(
-		filepicker.WithKeyMap(filePickerKeyMap),
-		filepicker.WithDir(home),
-		filepicker.WithOnSelect(func(path string) tea.Cmd {
-			return soda.Wrap(func() tea.Cmd {
-				contents, err := os.ReadFile(path)
-				if err != nil {
-					return soda.SendError(err)
-				}
+	modelKeyMap := soda.DefaultKeyMap()
+	modelKeyMap.Back.SetKeys("backspace")
+	modelKeyMap.Back.SetHelp("backspace", "back")
 
-				return soda.PushState(
-					viewport.New(
-						string(contents),
-						viewport.WithResizeContent(func(content string, size soda.Size) string {
-							return wrap.String(content, size.Width)
-						}),
-					),
-				)
-			})
-		}),
-	))
+	model := soda.New(state, soda.WithKeyMap(modelKeyMap))
 
 	program := tea.NewProgram(model, tea.WithAltScreen())
 	_, err = program.Run()
