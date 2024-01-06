@@ -14,6 +14,8 @@ var _ soda.State = (*State)(nil)
 type State struct {
 	textInput textinput.Model
 
+	suggestionsSupplier SuggestionsSupplier
+
 	keyMap   KeyMap
 	onSubmit OnSubmitFunc
 }
@@ -79,6 +81,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 	var cmd tea.Cmd
 	s.textInput, cmd = s.textInput.Update(msg)
+	s.textInput.SetSuggestions(s.suggestionsSupplier(s.textInput.Value()))
 	return cmd
 }
 
