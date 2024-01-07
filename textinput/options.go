@@ -8,6 +8,12 @@ type SuggestionsSupplier func(value string) []string
 
 type Option func(*State)
 
+func WithKeyMap(keyMap KeyMap) Option {
+	return func(state *State) {
+		state.keyMap = keyMap
+	}
+}
+
 func WithOnSubmit(submitFunc OnSubmitFunc) Option {
 	return func(state *State) {
 		state.onSubmit = submitFunc

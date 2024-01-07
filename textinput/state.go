@@ -53,8 +53,30 @@ func (s *State) KeyMap() help.KeyMap {
 }
 
 func (s *State) Init(ctx context.Context) tea.Cmd {
+	return tea.Batch(s.focus(), textinput.Blink)
+}
+
+func (s *State) focus() tea.Cmd {
 	s.keyMap.Focus.SetEnabled(false)
-	return tea.Batch(s.textInput.Focus(), textinput.Blink)
+	s.keyMap.Blur.SetEnabled(true)
+	s.keyMap.Submit.SetEnabled(true)
+	return s.textInput.Focus()
+}
+
+func (s *State) blur() tea.Cmd {
+	s.keyMap.Focus.SetEnabled(true)
+	s.keyMap.Blur.SetEnabled(false)
+	s.keyMap.Submit.SetEnabled(false)
+	s.textInput.Blur()
+	return nil
+}
+
+func (s *State) toggleFocus() tea.Cmd {
+	if s.Focused() {
+		return s.blur()
+	}
+
+	return s.focus()
 }
 
 func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
@@ -63,19 +85,8 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		switch {
 		case key.Matches(msg, s.keyMap.Submit):
 			return s.onSubmit(s.textInput.Value())
-		case key.Matches(msg, s.keyMap.Focus):
-			s.keyMap.Focus.SetEnabled(false)
-			s.keyMap.Blur.SetEnabled(true)
-			s.keyMap.Submit.SetEnabled(true)
-
-			return s.textInput.Focus()
-		case key.Matches(msg, s.keyMap.Blur):
-			s.keyMap.Focus.SetEnabled(true)
-			s.keyMap.Blur.SetEnabled(false)
-			s.keyMap.Submit.SetEnabled(false)
-
-			s.textInput.Blur()
-			return nil
+		case key.Matches(msg, s.keyMap.Focus, s.keyMap.Blur):
+			return s.toggleFocus()
 		}
 	}
 

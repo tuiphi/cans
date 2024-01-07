@@ -9,6 +9,12 @@ type (
 
 type Option[I Item] func(*State[I])
 
+func WithKeyMap[I Item](keyMap KeyMap) Option[I] {
+	return func(state *State[I]) {
+		state.keyMap = keyMap
+	}
+}
+
 func WithMultiChoice[I Item](multiChoice bool) Option[I] {
 	return func(state *State[I]) {
 		state.multiChoice = multiChoice
