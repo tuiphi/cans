@@ -10,21 +10,24 @@ import (
 )
 
 func run() error {
-	state := textinput.New(textinput.WithOnSubmit(func(value string) tea.Cmd {
-		duration, err := time.ParseDuration(value)
-		if err != nil {
-			return soda.SendError(err)
-		}
+	state := textinput.New(
+		textinput.WithPlaceholder("Enter duration in a format of 1h2m3s4ms"),
+		textinput.WithOnSubmit(func(value string) tea.Cmd {
+			duration, err := time.ParseDuration(value)
+			if err != nil {
+				return soda.SendError(err)
+			}
 
-		return soda.PushState(timer.New(
-			duration,
-			timer.WithInterval(time.Millisecond),
-			timer.WithAutoStart(false),
-			timer.WithOnTimeout(soda.Wrap(func() tea.Cmd {
-				return soda.Notify("Timeout")
-			})),
-		))
-	}))
+			return soda.PushState(timer.New(
+				duration,
+				timer.WithInterval(time.Millisecond),
+				timer.WithAutoStart(false),
+				timer.WithOnTimeout(soda.Wrap(func() tea.Cmd {
+					return soda.Notify("Timeout")
+				})),
+			))
+		}),
+	)
 
 	model := soda.New(state)
 	program := tea.NewProgram(model, tea.WithAltScreen())
