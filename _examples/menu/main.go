@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/bubbletea"
 	"github.com/tuiphy/cans/list"
 	"github.com/tuiphy/cans/viewport"
+	"github.com/tuiphy/cans/wrapper"
 	"github.com/tuiphy/soda"
 	"log"
 	"strings"
@@ -28,7 +29,7 @@ func run() error {
 
 			sb.Grow(30 * len(items))
 
-			sb.WriteString("You selected:\n")
+			sb.WriteString("You've selected:\n")
 
 			for _, item := range items {
 				fmt.Fprintf(&sb, "- %s\n", item.title)
@@ -38,7 +39,15 @@ func run() error {
 		}),
 	)
 
-	model := soda.New(state)
+	model := soda.New(wrapper.New(
+		state,
+		wrapper.WithTitle[*list.State[Item]](func() string {
+			return "Menu"
+		}),
+		wrapper.WithSubtitle[*list.State[Item]](func() string {
+			return "Order something"
+		}),
+	))
 	program := tea.NewProgram(model, tea.WithAltScreen())
 
 	_, err := program.Run()
