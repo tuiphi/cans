@@ -101,6 +101,8 @@ func (s *State[I]) KeyMap() help.KeyMap {
 func (s *State[I]) Init(ctx context.Context) tea.Cmd {
 	if !s.multiChoice {
 		s.keyMap.Select.SetEnabled(false)
+		s.keyMap.SelectAll.SetEnabled(false)
+		s.keyMap.DeselectAll.SetEnabled(false)
 	}
 
 	return nil
@@ -142,6 +144,12 @@ func (s *State[I]) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			}
 
 			return s.submitSingle()
+		case key.Matches(msg, s.keyMap.SelectAll):
+			s.setSelectedAll(true)
+			return nil
+		case key.Matches(msg, s.keyMap.DeselectAll):
+			s.setSelectedAll(false)
+			return nil
 		}
 	}
 
@@ -151,27 +159,57 @@ updateList:
 	return cmd
 }
 
-func (s *State[I]) submitMulti() tea.Cmd {
+func (s *State[I]) selectedItems() []I {
 	listItems := s.list.Items()
 
-	submitItems := make([]I, 0, cap(listItems))
+	selectedItems := make([]I, 0, cap(listItems))
 	for _, listItem := range listItems {
 		item, ok := listItem.(*_Item[I])
 		if ok && item.selected {
-			submitItems = append(submitItems, item.internal)
+			selectedItems = append(selectedItems, item.internal)
 		}
 	}
 
-	return s.onMultiSubmit(submitItems)
+	if len(selectedItems) == 0 {
+		item, ok := s.selectedItem()
+		if ok {
+			selectedItems = append(selectedItems, item)
+		}
+	}
+
+	return selectedItems
+}
+
+func (s *State[I]) selectedItem() (I, bool) {
+	item, ok := s.list.SelectedItem().(*_Item[I])
+	if !ok {
+		var i I
+		return i, false
+	}
+
+	return item.internal, true
+}
+
+func (s *State[I]) submitMulti() tea.Cmd {
+	return s.onMultiSubmit(s.selectedItems())
+}
+
+func (s *State[I]) setSelectedAll(selected bool) {
+	for _, listItem := range s.list.Items() {
+		item, ok := listItem.(*_Item[I])
+		if ok {
+			item.selected = selected
+		}
+	}
 }
 
 func (s *State[I]) submitSingle() tea.Cmd {
-	item, ok := s.list.SelectedItem().(*_Item[I])
+	item, ok := s.selectedItem()
 	if !ok {
 		return nil
 	}
 
-	return s.onSubmit(item.internal)
+	return s.onSubmit(item)
 }
 
 func (s *State[I]) View() string {
