@@ -1,10 +1,18 @@
 package textinput
 
-import tea "github.com/charmbracelet/bubbletea"
-
-type OnSubmitFunc func(value string) tea.Cmd
+import (
+	"github.com/charmbracelet/bubbles/textinput"
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 type SuggestionsSupplier func(value string) []string
+
+type (
+	ValidateFunc = textinput.ValidateFunc
+	OnSubmitFunc func(value string) tea.Cmd
+)
+
+type EchoMode = textinput.EchoMode
 
 type Option func(*State)
 
@@ -23,6 +31,24 @@ func WithOnSubmit(submitFunc OnSubmitFunc) Option {
 func WithPlaceholder(placeholder string) Option {
 	return func(state *State) {
 		state.textInput.Placeholder = placeholder
+	}
+}
+
+func WithValidate(f ValidateFunc) Option {
+	return func(state *State) {
+		state.textInput.Validate = f
+	}
+}
+
+func WithCharLimit(limit int) Option {
+	return func(state *State) {
+		state.textInput.CharLimit = limit
+	}
+}
+
+func WithEchoMode(echoMode EchoMode) Option {
+	return func(state *State) {
+		state.textInput.EchoMode = echoMode
 	}
 }
 
