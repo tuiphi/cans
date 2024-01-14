@@ -72,6 +72,6 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	return nil
 }
 
-func (s *State) View() string {
+func (s *State) View(soda.Layout) string {
 	return s.prompt
 }

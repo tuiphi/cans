@@ -212,6 +212,6 @@ func (s *State[I]) submitSingle() tea.Cmd {
 	return s.onSubmit(item)
 }
 
-func (s *State[I]) View() string {
+func (s *State[I]) View(soda.Layout) string {
 	return s.list.View()
 }

@@ -94,9 +94,9 @@ func (s *State[S]) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	return s.internal.Update(ctx, msg)
 }
 
-func (s *State[S]) View() string {
+func (s *State[S]) View(layout soda.Layout) string {
 	if s.view != nil {
-		return s.view()
+		return s.view(layout)
 	}
-	return s.internal.View()
+	return s.internal.View(layout)
 }

@@ -18,7 +18,7 @@ type (
 	KeyMapFunc   func() help.KeyMap
 	InitFunc     func(ctx context.Context) tea.Cmd
 	UpdateFunc   func(ctx context.Context, msg tea.Msg) tea.Cmd
-	ViewFunc     func() string
+	ViewFunc     func(layout soda.Layout) string
 )
 
 type Option[S soda.State] func(*State[S])
