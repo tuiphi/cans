@@ -9,17 +9,46 @@ import (
 
 var _ Node = (*Tree)(nil)
 
+type TreeOption func(*Tree)
+
+func WithTreeDirection(direction Direction) TreeOption {
+	return func(tree *Tree) {
+		tree.direction = direction
+	}
+}
+
+func WithTreeSplitRatio(ratio Ratio) TreeOption {
+	return func(tree *Tree) {
+		tree.splitRatio = ratio
+	}
+}
+
+func NewTree(left, right Node, options ...TreeOption) *Tree {
+	tree := &Tree{
+		left:       left,
+		right:      right,
+		splitRatio: RatioEqual,
+		direction:  DirectionHorizontal,
+	}
+
+	for _, option := range options {
+		option(tree)
+	}
+
+	return tree
+}
+
 type Tree struct {
-	Left, Right Node
-	SplitRatio  Ratio
-	Direction   Direction
+	left, right Node
+	splitRatio  Ratio
+	direction   Direction
 }
 
 // View implements Node.
 func (t *Tree) View(layout soda.Layout) string {
 	var join func(views ...string) string
 
-	switch t.Direction {
+	switch t.direction {
 	case DirectionVertical:
 		join = func(views ...string) string {
 			return lipgloss.JoinVertical(lipgloss.Left, views...)
@@ -32,16 +61,16 @@ func (t *Tree) View(layout soda.Layout) string {
 		panic("unreachable")
 	}
 
-	return join(t.Left.View(layout), t.Right.View(layout))
+	return join(t.left.View(layout), t.right.View(layout))
 }
 
 // SetSize implements Node.
 func (t *Tree) SetSize(size soda.Size) tea.Cmd {
-	left, right := t.Direction.Split(t.SplitRatio, size)
+	left, right := t.direction.Split(t.splitRatio, size)
 
 	return tea.Batch(
-		t.Left.SetSize(left),
-		t.Right.SetSize(right),
+		t.left.SetSize(left),
+		t.right.SetSize(right),
 	)
 }
 
@@ -57,8 +86,8 @@ func (t *Tree) Windows() []window.Window {
 		}
 	}
 
-	handleNode(t.Left)
-	handleNode(t.Right)
+	handleNode(t.left)
+	handleNode(t.right)
 
 	return states
 }

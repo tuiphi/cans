@@ -12,11 +12,24 @@ var (
 	_ window.Window = (*Leaf)(nil)
 )
 
-func NewLeaf(state soda.State, viewOnly bool) *Leaf {
-	return &Leaf{
-		state:    state,
-		viewOnly: viewOnly,
+type LeafOption func(*Leaf)
+
+func WithLeafViewOnly(viewOnly bool) LeafOption {
+	return func(leaf *Leaf) {
+		leaf.viewOnly = viewOnly
 	}
+}
+
+func NewLeaf(state soda.State, options ...LeafOption) *Leaf {
+	leaf := &Leaf{
+		state: state,
+	}
+
+	for _, option := range options {
+		option(leaf)
+	}
+
+	return leaf
 }
 
 type Leaf struct {

@@ -15,26 +15,14 @@ import (
 )
 
 func run() error {
-	layout := bsp.New(&bsp.Tree{
-		SplitRatio: bsp.RatioGolden,
-		Left: bsp.NewLeaf(
-			bordered.New(&SizeHolder{title: "left"}),
-			false,
+	layout := bsp.New(bsp.NewTree(
+		bsp.NewLeaf(bordered.New(timer.New(time.Hour, timer.WithInterval(time.Millisecond)))),
+		bsp.NewTree(
+			bsp.NewLeaf(bordered.New(&SizeHolder{title: "right-left"})),
+			bsp.NewLeaf(bordered.New(&SizeHolder{title: "right-right"})),
+			bsp.WithTreeDirection(bsp.DirectionVertical),
 		),
-		Right: &bsp.Tree{
-			SplitRatio: bsp.RatioGolden,
-			Left: bsp.NewLeaf(
-				bordered.New(&SizeHolder{title: "right-left"}),
-				false,
-			),
-			Right: bsp.NewLeaf(
-				bordered.New(timer.New(time.Hour, timer.WithInterval(time.Millisecond))),
-				false,
-			),
-			Direction: bsp.DirectionVertical,
-		},
-		Direction: bsp.DirectionHorizontal,
-	})
+	))
 
 	state := mux.New(layout)
 	model := soda.New(state)
