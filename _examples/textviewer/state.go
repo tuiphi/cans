@@ -54,6 +54,6 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	return s.filePicker.Update(ctx, msg)
 }
 
-func (s *State) View() string {
-	return s.filePicker.View()
+func (s *State) View(layout soda.Layout) string {
+	return s.filePicker.View(layout)
 }
