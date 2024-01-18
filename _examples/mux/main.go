@@ -16,13 +16,13 @@ import (
 
 func run() error {
 	layout := bsp.New(&bsp.Tree{
-		SplitRatio: 0.7,
+		SplitRatio: bsp.RatioGolden,
 		Left: bsp.NewLeaf(
 			bordered.New(&SizeHolder{title: "left"}),
 			false,
 		),
 		Right: &bsp.Tree{
-			SplitRatio: 0.5,
+			SplitRatio: bsp.RatioGolden,
 			Left: bsp.NewLeaf(
 				bordered.New(&SizeHolder{title: "right-left"}),
 				false,

@@ -11,22 +11,22 @@ var _ Node = (*Tree)(nil)
 
 type Tree struct {
 	Left, Right Node
-	SplitRatio  float64
+	SplitRatio  Ratio
 	Direction   Direction
 }
 
 // View implements Node.
 func (t *Tree) View(layout soda.Layout) string {
-	var join func(left, right string) string
+	var join func(views ...string) string
 
 	switch t.Direction {
 	case DirectionVertical:
-		join = func(left, right string) string {
-			return lipgloss.JoinVertical(lipgloss.Left, left, right)
+		join = func(views ...string) string {
+			return lipgloss.JoinVertical(lipgloss.Left, views...)
 		}
 	case DirectionHorizontal:
-		join = func(left, right string) string {
-			return lipgloss.JoinHorizontal(lipgloss.Left, left, right)
+		join = func(views ...string) string {
+			return lipgloss.JoinHorizontal(lipgloss.Left, views...)
 		}
 	default:
 		panic("unreachable")

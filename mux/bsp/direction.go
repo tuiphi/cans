@@ -9,12 +9,12 @@ const (
 	DirectionVertical
 )
 
-func (d Direction) Split(ratio float64, size soda.Size) (soda.Size, soda.Size) {
+func (d Direction) Split(ratio Ratio, size soda.Size) (soda.Size, soda.Size) {
 	switch d {
 	case DirectionVertical:
-		return size.SplitVertical(ratio)
+		return size.SplitVertical(float64(ratio))
 	case DirectionHorizontal:
-		return size.SplitHorizontal(ratio)
+		return size.SplitHorizontal(float64(ratio))
 	default:
 		panic("unreachable")
 	}
