@@ -3,14 +3,15 @@ package list
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/paginator"
 	"github.com/charmbracelet/bubbletea"
 	"github.com/tuiphy/soda"
-	"strconv"
-	"strings"
 )
 
 var _ soda.State = (*State[list.DefaultItem])(nil)
@@ -214,4 +215,17 @@ func (s *State[I]) submitSingle() tea.Cmd {
 
 func (s *State[I]) View(soda.Layout) string {
 	return s.list.View()
+}
+
+func (s *State[I]) SelectedItems() []I {
+	listItems := s.list.Items()
+
+	selectedItems := make([]I, 0, cap(listItems))
+	for _, listItem := range listItems {
+		if item, ok := listItem.(*_Item[I]); ok && item.selected {
+			selectedItems = append(selectedItems, item.internal)
+		}
+	}
+
+	return selectedItems
 }
