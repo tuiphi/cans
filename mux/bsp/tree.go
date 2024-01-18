@@ -11,6 +11,7 @@ var _ Node = (*Tree)(nil)
 
 type Tree struct {
 	Left, Right Node
+	SplitRatio  float64
 	Direction   Direction
 }
 
@@ -36,7 +37,7 @@ func (t *Tree) View(layout soda.Layout) string {
 
 // SetSize implements Node.
 func (t *Tree) SetSize(size soda.Size) tea.Cmd {
-	left, right := t.Direction.Split(size)
+	left, right := t.Direction.Split(t.SplitRatio, size)
 
 	return tea.Batch(
 		t.Left.SetSize(left),

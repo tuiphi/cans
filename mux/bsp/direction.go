@@ -9,9 +9,7 @@ const (
 	DirectionVertical
 )
 
-func (d Direction) Split(size soda.Size) (soda.Size, soda.Size) {
-	const ratio = 0.5
-
+func (d Direction) Split(ratio float64, size soda.Size) (soda.Size, soda.Size) {
 	switch d {
 	case DirectionVertical:
 		return size.SplitVertical(ratio)
