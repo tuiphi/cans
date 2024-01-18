@@ -4,6 +4,9 @@
 
 Component-like states for the [soda](https://github.com/tuiphi/soda) TUI framework.
 
+> [!WARNING] 
+> Work in progress.
+
 ## Install
 
 ```bash
