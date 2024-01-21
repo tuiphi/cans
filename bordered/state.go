@@ -12,11 +12,11 @@ import (
 var _ soda.State = (*State)(nil)
 
 type State struct {
-	size                   soda.Size
 	inner                  soda.State
-	sides                  []bool
 	border                 lipgloss.Border
 	foreground, background lipgloss.Color
+	sides                  []bool
+	size                   soda.Size
 }
 
 // Destroy implements soda.State.

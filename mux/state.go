@@ -17,8 +17,8 @@ var _ soda.State = (*State)(nil)
 
 type State struct {
 	layout    Layout
-	activeIdx int
 	keyMap    KeyMap
+	activeIdx int
 }
 
 func (s *State) windows() []window.Window {
@@ -178,4 +178,15 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 // View implements soda.State.
 func (s *State) View(layout soda.Layout) string {
 	return s.layout.View(layout)
+}
+
+func (s *State) States() []soda.State {
+	windows := s.windows()
+
+	states := make([]soda.State, len(windows))
+	for i, window := range windows {
+		states[i] = window.State()
+	}
+
+	return states
 }

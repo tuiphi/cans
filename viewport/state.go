@@ -3,6 +3,7 @@ package viewport
 import (
 	"context"
 	"fmt"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/charmbracelet/bubbletea"
@@ -25,6 +26,10 @@ func (s *State) Destroy() {
 
 func (s *State) Focused() bool {
 	return false
+}
+
+func (s *State) SetContent(content string) {
+	s.viewport.SetContent(content)
 }
 
 func (s *State) SetSize(size soda.Size) tea.Cmd {
