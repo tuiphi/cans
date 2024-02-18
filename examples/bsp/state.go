@@ -83,7 +83,7 @@ func (b *Bordered) Status() string {
 
 // Subtitle implements soda.State.
 func (b *Bordered) Subtitle() string {
-	return b.bordered.Status()
+	return b.bordered.Subtitle()
 }
 
 // Title implements soda.State.

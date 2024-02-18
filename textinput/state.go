@@ -2,10 +2,12 @@ package textinput
 
 import (
 	"context"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/tuiphy/soda"
 )
 
@@ -28,7 +30,8 @@ func (s *State) Focused() bool {
 }
 
 func (s *State) SetSize(size soda.Size) tea.Cmd {
-	s.textInput.Width = size.Width
+	promptWidth := lipgloss.Width(s.textInput.PromptStyle.Render(s.textInput.Prompt))
+	s.textInput.Width = size.Width - promptWidth - 1
 	return nil
 }
 
