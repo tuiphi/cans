@@ -3,11 +3,18 @@ package list
 import tea "github.com/charmbracelet/bubbletea"
 
 type (
-	OnSubmitFunc[I Item]      func(item I) tea.Cmd
-	OnMultiSubmitFunc[I Item] func(items []I) tea.Cmd
+	OnSubmitFunc[I Item]             func(item I) tea.Cmd
+	OnMultiSubmitFunc[I Item]        func(items []I) tea.Cmd
+	OnSelectedItemChangeFunc[I Item] func(item I, ok bool) tea.Cmd
 )
 
 type Option[I Item] func(*State[I])
+
+func OnSelectedItemChange[I Item](selectedItemChangeFunc OnSelectedItemChangeFunc[I]) Option[I] {
+	return func(state *State[I]) {
+		state.onSelectedItemChangeFunc = selectedItemChangeFunc
+	}
+}
 
 func WithKeyMap[I Item](keyMap KeyMap) Option[I] {
 	return func(state *State[I]) {

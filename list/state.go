@@ -19,8 +19,9 @@ var _ soda.State = (*State[list.DefaultItem])(nil)
 type State[I Item] struct {
 	list list.Model
 
-	onSubmit      OnSubmitFunc[I]
-	onMultiSubmit OnMultiSubmitFunc[I]
+	onSubmit                 OnSubmitFunc[I]
+	onMultiSubmit            OnMultiSubmitFunc[I]
+	onSelectedItemChangeFunc OnSelectedItemChangeFunc[I]
 
 	itemHeight int
 
@@ -155,9 +156,25 @@ func (s *State[I]) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	}
 
 updateList:
+	prevItem := s.list.SelectedItem()
+
 	var cmd tea.Cmd
 	s.list, cmd = s.list.Update(msg)
-	return cmd
+
+	currentItem := s.list.SelectedItem()
+
+	switch {
+	case prevItem == nil && currentItem == nil:
+		return cmd
+	case prevItem == nil && currentItem != nil:
+		return tea.Batch(cmd, s.onSelectedItemChangeFunc(s.selectedItem()))
+	case prevItem != nil && currentItem == nil:
+		return tea.Batch(cmd, s.onSelectedItemChangeFunc(s.selectedItem()))
+	case prevItem.FilterValue() != currentItem.FilterValue():
+		return tea.Batch(cmd, s.onSelectedItemChangeFunc(s.selectedItem()))
+	default:
+		return cmd
+	}
 }
 
 func (s *State[I]) selectedItems() []I {

@@ -14,6 +14,9 @@ func New[I Item](items []I, options ...Option[I]) *State[I] {
 		onMultiSubmit: func([]I) tea.Cmd {
 			return nil
 		},
+		onSelectedItemChangeFunc: func(I, bool) tea.Cmd {
+			return nil
+		},
 		multiChoice:  false,
 		itemHeight:   2,
 		singularNoun: "item",
