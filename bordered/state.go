@@ -24,6 +24,10 @@ func (s *State) Destroy() {
 	s.inner.Destroy()
 }
 
+func (s *State) Inner() soda.State {
+	return s.inner
+}
+
 // Focused implements soda.State.
 func (s *State) Focused() bool {
 	return s.inner.Focused()
@@ -31,7 +35,6 @@ func (s *State) Focused() bool {
 
 // Init implements soda.State.
 func (s *State) Init(ctx context.Context) tea.Cmd {
-	s.SetActive(false)
 	return s.inner.Init(ctx)
 }
 
@@ -81,14 +84,6 @@ func (s *State) SetForeground(color lipgloss.Color) {
 
 func (s *State) SetBackground(color lipgloss.Color) {
 	s.background = color
-}
-
-func (s *State) SetActive(active bool) {
-	if active {
-		s.SetForeground("#DCDCDC")
-	} else {
-		s.SetForeground("#A9A9A9")
-	}
 }
 
 // View implements soda.State.
